@@ -1,11 +1,13 @@
 import React, {useState} from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 const AuthorForm = (props) => {
     const [name, setName] = useState("");
     const [errors, setErrors] = useState([]);
+    const navigate = useNavigate();
 
     const onSubmitHandler =(e) => {
         e.preventDefault();
@@ -15,7 +17,11 @@ const AuthorForm = (props) => {
         axios.post('http://localhost:8000/api/author/new', {
             name
         })
-            .then(res => console.log(res))
+            .then(res => { 
+            console.log(res);
+            navigate("/");
+            })
+            
             .catch(err=>{
                 setErrors(err.response.data.errors);
             })

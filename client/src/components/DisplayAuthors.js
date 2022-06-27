@@ -4,18 +4,35 @@ import { Link } from 'react-router-dom';
 
 
 const DisplayAuthors = () => {
-    const {authors, setAuthors} = useState([]);
+    const [authors, setAuthors] = useState([]);
 
     useEffect(() => {
-        axios.get("http://localhost:8000/api/author/")
+        axios.get("http://localhost:8000/api/author")
             .then((res) => {
                 console.log(res.data);
                 setAuthors(res.data);
             })
             .catch((err) => {
                 console.log(err);
+            });
+    }, []);
+
+    const handleDeleteAuthor = (id) => {
+        axios.delete(`http://localhost:8000/api/author/${id}`)
+            .then((res) => {
+                console.log("Author deleted");
+                console.log(res);
+                const filteredAuthors = authors.filter((author) => {
+                    return author._id !== id;
+                    });
+                setAuthors(filteredAuthors);
             })
-    }, [])
+            .catch((err) => {
+                console.log("error deleting author", err.res);
+
+            });
+    }
+
    
     return(
        
@@ -28,15 +45,23 @@ const DisplayAuthors = () => {
                 <table>
                     <thead>
                         <th>Author Name:</th>
-                        <th> Actions </th>
+                        <th> Edit </th>
+                        <th> Delete </th>
                     </thead>
                     <tbody>
                         {authors.map((author,index) => {
                             return(
-                                <tr key={index}>
+                                <tr key={author._id}>
                                     <td>{author.name}</td>
+                                    <td>
+                                       <button><Link to={"/edit/"+ author._id}>Edit</Link></button> 
+                                    </td> 
+                                    <td>
+                                        <button onClick={() => handleDeleteAuthor(author._id)}>Delete</button>
                                     
+                                    </td>   
                                 </tr>
+                                    
                             )
                         }
                         )}
@@ -48,17 +73,18 @@ const DisplayAuthors = () => {
         </div>
 
     )
-
-   
-   
-   
-   
-   
-   
-   
-
-
-
 }
-
 export default DisplayAuthors;
+
+
+
+   
+   
+   
+   
+   
+
+   
+   
+
+
